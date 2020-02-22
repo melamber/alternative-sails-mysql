@@ -1,6 +1,13 @@
 {
-  "name": "sails-mysql",
-  "version": "1.0.1",
+  "author": {
+    "name": "melamber",
+    "email": "anton.shramkov@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/melamber/alternative-sails-mysql/issues"
+  },
+  "name": "alternative-sails-mysql",
+  "version": "1.1.0",
   "description": "MySQL adapter for Sails.js",
   "main": "lib/adapter.js",
   "scripts": {
@@ -13,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/balderdashy/sails-mysql.git"
+    "url": "git://github.com/melamber/alternative-sails-mysql.git"
   },
   "keywords": [
     "mysql",
@@ -21,7 +28,6 @@
     "waterline",
     "sails"
   ],
-  "author": "Mike McNeil",
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
@@ -51,5 +57,9 @@
       "unique",
       "autoIncrement.sequential"
     ]
+  },
+  "engine-strict": true,
+  "engines": {
+    "node": ">=8"
   }
 }

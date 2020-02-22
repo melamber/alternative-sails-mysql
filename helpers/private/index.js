@@ -27,5 +27,8 @@ module.exports = {
     buildIndexes: require('./schema/build-indexes'),
     buildSchema: require('./schema/build-schema'),
     escapeTableName: require('./schema/escape-table-name')
+  },
+  sails: {
+    initInSails: require('./sails/init-in-sails'),
   }
 };

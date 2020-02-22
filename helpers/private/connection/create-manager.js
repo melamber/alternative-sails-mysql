@@ -14,10 +14,10 @@
 //
 // Create a new connection manager to use.
 
-var MySQL = require('machinepack-mysql');
+var createManagerMachinePack = require('./create-manager-machine-pack');
 
 module.exports = function createManager(url, config) {
-  var report = MySQL.createManager({
+  var report = createManagerMachinePack({
     connectionString: url,
     meta: config
   }).execSync();
