@@ -18,21 +18,12 @@ var MySQL = require('machinepack-mysql');
 
 
 module.exports = function spawnConnection(datastore, cb) {
-  const chooseDataStore = (dataStore, sourceStore = null) => {
+  const chooseDataStore = (dataStore) => {
     const dataStorePool = dataStore.manager.pool;
-    const dataStoreConnectionLimit = dataStorePool.config.connectionLimit;
     const dataStoreAllConnectionsLength = dataStorePool._allConnections.length;
     const dataStoreFreeConnectionsLength = dataStorePool._freeConnections.length;
 
-    if (!sourceStore) {
-      sourceStore = dataStore;
-    }
-
-    if (!dataStore.alternative) {
-      return sourceStore;
-    }
-
-    if (dataStoreAllConnectionsLength < 1) {
+    if (!dataStore.alternative || dataStoreAllConnectionsLength < 1) {
       return dataStore;
     }
 
@@ -40,18 +31,19 @@ module.exports = function spawnConnection(datastore, cb) {
     const alternativeStoreConnectionLimit = alternativeStorePool.config.connectionLimit;
     const alternativeStoreAllConnectionsLength = alternativeStorePool._allConnections.length;
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
-    const dataStoreCapacityPercentage =
-      (dataStoreConnectionLimit - dataStoreFreeConnectionsLength) / dataStoreConnectionLimit
-      - ((dataStoreConnectionLimit - dataStoreAllConnectionsLength) / dataStoreConnectionLimit);
-    const alternativeStoreCapacityPercentage =
-      (alternativeStoreConnectionLimit - alternativeStoreFreeConnectionsLength) / alternativeStoreConnectionLimit
-      - ((alternativeStoreConnectionLimit - alternativeStoreAllConnectionsLength) / alternativeStoreConnectionLimit);
 
-    if (dataStoreCapacityPercentage <= alternativeStoreCapacityPercentage) {
+    if (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength
+      || alternativeStoreAllConnectionsLength >= alternativeStoreConnectionLimit
+    ) {
       return dataStore;
     }
 
-    return chooseDataStore(dataStore.alternative, sourceStore);
+    const alternative = {
+      ...dataStore.alternative,
+      sourceDataStore: dataStore,
+    };
+
+    return chooseDataStore(alternative);
   };
   const getConnection = (dataStore, cb) => {
     // Validate datastore
@@ -70,6 +62,13 @@ module.exports = function spawnConnection(datastore, cb) {
         failed(err) {
           if (dataStore.alternative) {
             return getConnection(dataStore.alternative, cb);
+          }
+
+          if (dataStore.sourceDataStore) {
+            return getConnection({
+              ...dataStore.sourceDataStore,
+              alternative: undefined,
+            }, cb);
           }
 
           return cb(err);
