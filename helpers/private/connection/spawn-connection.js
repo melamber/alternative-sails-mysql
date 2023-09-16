@@ -37,7 +37,8 @@ module.exports = function spawnConnection(datastore, cb) {
     }
 
     const alternativeStorePool = dataStore.alternative.manager.pool;
-    const alternativeStoreAllConnectionsLength = alternativeStorePool.length;
+    const alternativeStoreAllConnections = alternativeStorePool._allConnections;
+    const alternativeStoreAllConnectionsLength = alternativeStoreAllConnections.length;
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
     const dataStoreCapacityPercentage = (dataStoreAllConnections - dataStoreFreeConnectionsLength)
       / dataStoreAllConnections;
