@@ -45,7 +45,7 @@ module.exports = function spawnConnection(datastore, cb) {
     const alternativeStoreCapacityPercentage = (alternativeStoreConnectionLimit - alternativeStoreFreeConnectionsLength)
       / alternativeStoreConnectionLimit;
 
-    if (dataStoreCapacityPercentage >= alternativeStoreCapacityPercentage) {
+    if (dataStoreCapacityPercentage <= alternativeStoreCapacityPercentage) {
       return dataStore;
     }
 
