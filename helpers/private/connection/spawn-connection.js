@@ -33,8 +33,10 @@ module.exports = function spawnConnection(datastore, cb) {
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
 
     if (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength
-      || alternativeStoreAllConnectionsLength >= alternativeStoreConnectionLimit
-    ) {
+      || (
+        (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
+        >= alternativeStoreConnectionLimit
+      )) {
       return dataStore;
     }
 
