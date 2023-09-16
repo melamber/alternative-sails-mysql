@@ -20,7 +20,6 @@ var MySQL = require('machinepack-mysql');
 module.exports = function spawnConnection(datastore, cb) {
   const chooseDataStore = (dataStore, sourceStore = null) => {
     const dataStorePool = dataStore.manager.pool;
-    const dataStoreConnectionLimit = dataStorePool.config.connectionLimit;
     const dataStoreAllConnections = dataStorePool._allConnections;
     const dataStoreAllConnectionsLength = dataStoreAllConnections.length;
     const dataStoreFreeConnectionsLength = dataStorePool._freeConnections.length;
@@ -38,14 +37,15 @@ module.exports = function spawnConnection(datastore, cb) {
     }
 
     const alternativeStorePool = dataStore.alternative.manager.pool;
-    const alternativeStoreConnectionLimit = alternativeStorePool.config.connectionLimit;
+    const alternativeStoreAllConnectionsLength = alternativeStorePool.length;
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
-    const dataStoreCapacityPercentage = (dataStoreConnectionLimit - dataStoreFreeConnectionsLength)
-      / dataStoreConnectionLimit;
-    const alternativeStoreCapacityPercentage = (alternativeStoreConnectionLimit - alternativeStoreFreeConnectionsLength)
-      / alternativeStoreConnectionLimit;
+    const dataStoreCapacityPercentage = (dataStoreAllConnections - dataStoreFreeConnectionsLength)
+      / dataStoreAllConnections;
+    const alternativeStoreCapacityPercentage =
+      (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
+      / alternativeStoreAllConnectionsLength;
 
-    if (dataStoreCapacityPercentage <= alternativeStoreCapacityPercentage) {
+    if (dataStoreCapacityPercentage >= alternativeStoreCapacityPercentage) {
       return dataStore;
     }
 
