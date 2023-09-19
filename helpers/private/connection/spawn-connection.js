@@ -55,11 +55,6 @@ module.exports = function spawnConnection(datastore, cb) {
         sourceDataStore: dataStore,
       };
 
-      console.log(JSON.stringify({
-        event: 'sql_connection',
-        config: alternativeStorePool.config,
-      }));
-
       return chooseDataStore(alternative);
     } catch (error) {
       console.log(JSON.stringify({
@@ -82,7 +77,7 @@ module.exports = function spawnConnection(datastore, cb) {
         error(err) {
           console.error(JSON.stringify({
             event: 'sql_error',
-            err
+            err: err.message,
           }));
 
           return cb(err);
@@ -90,7 +85,7 @@ module.exports = function spawnConnection(datastore, cb) {
         failed(err) {
           console.error(JSON.stringify({
             event: 'sql_failed',
-            err
+            err: err.message,
           }));
           if (dataStore.alternative) {
             return getConnection(dataStore.alternative, cb);
