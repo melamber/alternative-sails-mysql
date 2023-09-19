@@ -33,6 +33,7 @@ module.exports = function spawnConnection(datastore, cb) {
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
 
     console.log(JSON.stringify({
+      event: 'sql_connections',
       dataStoreAllConnectionsLength,
       dataStoreFreeConnectionsLength,
       alternativeStoreConnectionLimit,
