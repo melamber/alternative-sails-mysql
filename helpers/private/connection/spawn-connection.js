@@ -32,20 +32,6 @@ module.exports = function spawnConnection(datastore, cb) {
     const alternativeStoreAllConnectionsLength = alternativeStorePool._allConnections.length;
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
 
-    console.log(JSON.stringify({
-      event: 'sql_connections',
-      dataStoreAllConnectionsLength,
-      dataStoreFreeConnectionsLength,
-      alternativeStoreConnectionLimit,
-      alternativeStoreAllConnectionsLength,
-      alternativeStoreFreeConnectionsLength,
-      firstCondition: dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength,
-      secondCondition: (
-        (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
-        >= alternativeStoreConnectionLimit
-      ),
-    }));
-
     if (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength
       || (
         (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
@@ -58,6 +44,11 @@ module.exports = function spawnConnection(datastore, cb) {
       ...dataStore.alternative,
       sourceDataStore: dataStore,
     };
+
+    console.log(JSON.stringify({
+      event: 'sql_connection',
+      config: alternativeStorePool.config,
+    }));
 
     return chooseDataStore(alternative);
   };
@@ -73,14 +64,26 @@ module.exports = function spawnConnection(datastore, cb) {
     })
       .switch({
         error(err) {
+          console.error(JSON.stringify({
+            event: 'sql_error',
+            err
+          }));
+
           return cb(err);
         },
         failed(err) {
+          console.error(JSON.stringify({
+            event: 'sql_failed',
+            err
+          }));
           if (dataStore.alternative) {
             return getConnection(dataStore.alternative, cb);
           }
 
           if (dataStore.sourceDataStore) {
+            console.log(JSON.stringify({
+              event: 'sql_source',
+            }));
             return getConnection({
               ...dataStore.sourceDataStore,
               alternative: undefined,
