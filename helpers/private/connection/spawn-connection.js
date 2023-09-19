@@ -64,7 +64,7 @@ module.exports = function spawnConnection(datastore, cb) {
     } catch (error) {
       console.log(JSON.stringify({
         event: 'sql_caught',
-        error,
+        error: error.message,
       }));
     }
   };
