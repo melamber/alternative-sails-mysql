@@ -112,6 +112,10 @@ module.exports = function spawnConnection(datastore, cb) {
 
   return getConnection(dataStore, (err, conn) => {
     if (err) {
+      console.log(JSON.stringify({
+        event: 'sql_connection_error',
+        err: err.message,
+      }));
       if  (!Object.is(dataStore, datastore)) {
         return getConnection(datastore, cb);
       } else {
