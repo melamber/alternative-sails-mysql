@@ -32,6 +32,15 @@ module.exports = function spawnConnection(datastore, cb) {
     const alternativeStoreAllConnectionsLength = alternativeStorePool._allConnections.length;
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
 
+    console.log(JSON.stringify({
+      event: 'sql_alternative',
+      alternative: !(dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength
+        || (
+          (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
+          >= alternativeStoreConnectionLimit
+        )),
+    }));
+
     if (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength
       || (
         (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
@@ -40,17 +49,24 @@ module.exports = function spawnConnection(datastore, cb) {
       return dataStore;
     }
 
-    const alternative = {
-      ...dataStore.alternative,
-      sourceDataStore: dataStore,
-    };
+    try {
+      const alternative = {
+        ...dataStore.alternative,
+        sourceDataStore: dataStore,
+      };
 
-    console.log(JSON.stringify({
-      event: 'sql_connection',
-      config: alternativeStorePool.config,
-    }));
+      console.log(JSON.stringify({
+        event: 'sql_connection',
+        config: alternativeStorePool.config,
+      }));
 
-    return chooseDataStore(alternative);
+      return chooseDataStore(alternative);
+    } catch (error) {
+      console.log(JSON.stringify({
+        event: 'sql_caught',
+        error,
+      }));
+    }
   };
   const getConnection = (dataStore, cb) => {
     // Validate datastore
