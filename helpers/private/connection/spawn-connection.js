@@ -32,7 +32,7 @@ module.exports = function spawnConnection(datastore, cb) {
     const alternativeStoreAllConnectionsLength = alternativeStorePool._allConnections.length;
     const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
 
-    console.log({
+    console.log(JSON.stringify({
       dataStoreAllConnectionsLength,
       dataStoreFreeConnectionsLength,
       alternativeStoreConnectionLimit,
@@ -43,7 +43,7 @@ module.exports = function spawnConnection(datastore, cb) {
         (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
         >= alternativeStoreConnectionLimit
       ),
-    });
+    }));
 
     if (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength
       || (
