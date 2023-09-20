@@ -52,10 +52,10 @@ function getConnection(dataStore, cb) {
     return cb(new Error('Spawn Connection requires a valid datastore.'));
   }
 
-  console.log({
+  console.log(JSON.stringify({
     event: 'sql_identity',
     identity: dataStore.config.identity,
-  });
+  }));
 
   MySQL.getConnection({
     manager: dataStore.manager,
