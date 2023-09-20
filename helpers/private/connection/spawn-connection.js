@@ -55,6 +55,9 @@ function getConnection(dataStore, cb) {
   console.log(JSON.stringify({
     event: 'sql_identity',
     identity: dataStore.config.identity,
+    socketPath: dataStore.config.socketPath,
+    url: dataStore.config.url,
+    connectionString: dataStore.manager.connectionString,
   }));
 
   MySQL.getConnection({
