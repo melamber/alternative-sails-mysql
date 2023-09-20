@@ -52,14 +52,6 @@ function getConnection(dataStore, cb) {
     return cb(new Error('Spawn Connection requires a valid datastore.'));
   }
 
-  console.log(JSON.stringify({
-    event: 'sql_identity',
-    identity: dataStore.config.identity,
-    socketPath: dataStore.config.socketPath,
-    url: dataStore.config.url,
-    connectionString: dataStore.manager.connectionString,
-  }));
-
   MySQL.getConnection({
     manager: dataStore.manager,
     meta: dataStore.config
@@ -88,6 +80,13 @@ function getConnection(dataStore, cb) {
         return cb(err);
       },
       success(connection) {
+        console.log(JSON.stringify({
+          event: 'sql_identity',
+          identity: dataStore.config.identity,
+          socketPath: dataStore.config.socketPath,
+          url: dataStore.config.url,
+          connectionString: dataStore.manager.connectionString,
+        }));
         return cb(null, connection.connection);
       }
     });
