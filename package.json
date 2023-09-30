@@ -7,7 +7,7 @@
     "url": "https://github.com/melamber/alternative-sails-mysql/issues"
   },
   "name": "alternative-sails-mysql",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "MySQL adapter for Sails.js",
   "main": "lib/adapter.js",
   "scripts": {

@@ -30,7 +30,7 @@ function chooseDataStore(dataStore) {
 
   if (!dataStore.alternative
     || (dataStoreAllConnectionsLength < 1)
-    || (dataStorePossibleConnections < alternativeStorePossibleConnections)
+    || (dataStorePossibleConnections > alternativeStorePossibleConnections)
     || (alternativeStorePossibleConnections <= 0 && (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength))
   ) {
     return dataStore;
