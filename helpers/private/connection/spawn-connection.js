@@ -18,23 +18,21 @@ var MySQL = require('machinepack-mysql');
 
 function chooseDataStore(dataStore) {
   const dataStorePool = dataStore.manager.pool;
+  const dataStoreConnectionLimit = dataStorePool.config.connectionLimit;
   const dataStoreAllConnectionsLength = dataStorePool._allConnections.length;
+  const dataStorePossibleConnections = dataStoreConnectionLimit - dataStoreAllConnectionsLength;
   const dataStoreFreeConnectionsLength = dataStorePool._freeConnections.length;
-
-  if (!dataStore.alternative || dataStoreAllConnectionsLength < 1) {
-    return dataStore;
-  }
-
   const alternativeStorePool = dataStore.alternative.manager.pool;
   const alternativeStoreConnectionLimit = alternativeStorePool.config.connectionLimit;
   const alternativeStoreAllConnectionsLength = alternativeStorePool._allConnections.length;
+  const alternativeStorePossibleConnections = alternativeStoreConnectionLimit - alternativeStoreAllConnectionsLength;
   const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
 
-  if (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength
-    || (
-      (alternativeStoreAllConnectionsLength - alternativeStoreFreeConnectionsLength)
-      >= alternativeStoreConnectionLimit
-    )) {
+  if (!dataStore.alternative
+    || (dataStoreAllConnectionsLength < 1)
+    || (dataStorePossibleConnections < alternativeStorePossibleConnections)
+    || (alternativeStorePossibleConnections <= 0 && (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength))
+  ) {
     return dataStore;
   }
 
