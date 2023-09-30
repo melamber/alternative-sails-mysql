@@ -22,15 +22,20 @@ function chooseDataStore(dataStore) {
   const dataStoreAllConnectionsLength = dataStorePool._allConnections.length;
   const dataStorePossibleConnections = dataStoreConnectionLimit - dataStoreAllConnectionsLength;
   const dataStoreFreeConnectionsLength = dataStorePool._freeConnections.length;
+
+  if (!dataStore.alternative
+    || (dataStoreAllConnectionsLength < 1)
+  ) {
+    return dataStore;
+  }
+
   const alternativeStorePool = dataStore.alternative.manager.pool;
   const alternativeStoreConnectionLimit = alternativeStorePool.config.connectionLimit;
   const alternativeStoreAllConnectionsLength = alternativeStorePool._allConnections.length;
   const alternativeStorePossibleConnections = alternativeStoreConnectionLimit - alternativeStoreAllConnectionsLength;
   const alternativeStoreFreeConnectionsLength = alternativeStorePool._freeConnections.length;
 
-  if (!dataStore.alternative
-    || (dataStoreAllConnectionsLength < 1)
-    || (dataStorePossibleConnections > alternativeStorePossibleConnections)
+  if ((dataStorePossibleConnections > alternativeStorePossibleConnections)
     || (alternativeStorePossibleConnections <= 0 && (dataStoreFreeConnectionsLength >= alternativeStoreFreeConnectionsLength))
   ) {
     return dataStore;
